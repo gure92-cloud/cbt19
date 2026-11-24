@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>전자기기생산 CBT 19회</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: 좁은 단일 칼럼 문제지 + 상단 고정 탭 바. 색은 안전보건표지 체계(지시=파랑, 경고=노랑, 안내=녹색, 금지=빨강)에서 가져옴 */
+:root{
+  --bg:#f3f5f8; --paper:#ffffff; --ink:#18212e; --muted:#5b6676; --line:#d9dfe7;
+  --sign-blue:#1d5aa6; --sign-blue-soft:#e6eef8; --sign-yellow:#f2b705; --sign-yellow-soft:#fdf4d6;
+  --sign-green:#1c7a4a; --sign-green-soft:#e3f2ea; --sign-red:#c0352b; --sign-red-soft:#fbe7e5;
+  --font-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --font-num:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10151d; --paper:#18202b; --ink:#e7ecf2; --muted:#9aa6b6; --line:#2b3644;
+  --sign-blue:#6aa3ea; --sign-blue-soft:#1a2b42; --sign-yellow:#f5c536; --sign-yellow-soft:#3a3115;
+  --sign-green:#5cc48d; --sign-green-soft:#163126; --sign-red:#ef7b70; --sign-red-soft:#3b1d1b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10151d; --paper:#18202b; --ink:#e7ecf2; --muted:#9aa6b6; --line:#2b3644;
+  --sign-blue:#6aa3ea; --sign-blue-soft:#1a2b42; --sign-yellow:#f5c536; --sign-yellow-soft:#3a3115;
+  --sign-green:#5cc48d; --sign-green-soft:#163126; --sign-red:#ef7b70; --sign-red-soft:#3b1d1b; color-scheme:dark}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.6;margin:0}
+.wrap{max-width:860px;margin:0 auto;padding-inline:16px;padding-block:0 64px}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--sign-blue);outline-offset:2px}
+
+header.top{padding-block:28px 18px;display:grid;gap:10px}
+.hazard{height:6px;border-radius:3px;background:repeating-linear-gradient(-45deg,var(--sign-yellow) 0 12px,var(--ink) 12px 24px);max-width:120px}
+h1{font-size:clamp(22px,4.6vw,30px);line-height:1.25;margin:0;font-weight:700;text-wrap:balance;letter-spacing:-.01em}
+.meta{color:var(--muted);font-size:13px;display:flex;flex-wrap:wrap;gap:4px 14px}
+.meta b{color:var(--ink);font-weight:600}
+.gate[hidden]{display:none!important}
+.gate{position:fixed;inset:0;z-index:50;background:rgba(15,23,32,.72);display:grid;place-items:center;padding:16px}
+.gcard{width:min(100%,420px);background:var(--paper,#fff);border-radius:16px;padding:22px 20px;display:grid;gap:12px;box-shadow:0 18px 50px rgba(0,0,0,.35)}
+.gcard h2{margin:0;font-size:22px}
+.gcard p{margin:0;color:var(--muted);line-height:1.55;font-size:14.5px}
+.gcard input{border:2px solid var(--line);border-radius:10px;padding:12px;font-size:18px;width:100%;background:#fff;color:inherit}
+.gcard input:focus{outline:3px solid var(--accent,#e5432f);outline-offset:1px}
+.gcard .gerr{color:#c0392b;font-weight:700;font-size:13px;min-height:1.2em}
+.gcard button{border:0;border-radius:10px;padding:13px;font-size:17px;font-weight:900;background:var(--accent,#e5432f);color:#fff;cursor:pointer}
+.gcard button:disabled{opacity:.4;cursor:default}
+.rp-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:4px 0 2px}
+.rp-info div{border:1px solid var(--line);border-radius:10px;padding:8px 10px;display:grid;gap:2px;background:var(--paper,#fff)}
+.rp-info span{font-size:12px;color:var(--muted)}
+.rp-info b{font-size:16px}
+.who .chg{border:1px solid var(--line);background:transparent;border-radius:6px;padding:5px 9px;font-size:13px;cursor:pointer;color:inherit}
+.who{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.who label{font-size:13px;color:var(--muted)}
+.who input{border:1px solid var(--line);background:var(--paper);border-radius:6px;padding:6px 10px;width:12em;max-width:100%}
+
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;border-bottom:1px solid var(--line);display:grid;gap:10px}
+.unitrow{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.unit{border:1.5px solid var(--line);background:var(--paper);border-radius:8px;padding:7px 6px;cursor:pointer;text-align:center;display:grid}
+.unit .t{font-weight:700;font-size:14.5px}
+.unit .s{font-family:var(--font-num);font-size:12px;color:var(--muted)}
+.unit[aria-selected="true"]{border-color:var(--sign-yellow);background:var(--sign-yellow-soft);box-shadow:inset 0 -3px 0 var(--sign-yellow)}
+.tabrow{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.tab{border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:8px 6px;cursor:pointer;text-align:center;display:grid;gap:0}
+.tab .t{font-weight:600;font-size:14px}
+.tab .s{font-family:var(--font-num);font-size:12px;color:var(--muted)}
+.tab[aria-selected="true"]{background:var(--sign-blue);border-color:var(--sign-blue);color:#fff}
+.tab[aria-selected="true"] .s{color:#dfe9f7}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin}
+.chip{flex:0 0 auto;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:3px 11px;font-size:12.5px;cursor:pointer;white-space:nowrap}
+.chip[aria-pressed="true"]{border-color:var(--sign-blue);background:var(--sign-blue-soft);color:var(--sign-blue);font-weight:600}
+.chip .k{font-family:var(--font-num);font-weight:600;margin-right:4px}
+.tools{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--paper);border-radius:6px;padding:5px 11px;font-size:13px;cursor:pointer}
+.btn.primary{background:var(--sign-blue);border-color:var(--sign-blue);color:#fff;font-weight:600}
+.btn:hover{border-color:var(--sign-blue)}
+.toggle{display:inline-flex;gap:5px;align-items:center;font-size:13px;color:var(--muted);cursor:pointer}
+
+.score{margin-block:16px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:10px}
+.score .head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px;align-items:baseline}
+.score .big{font-family:var(--font-num);font-size:22px;font-weight:600}
+.score .big small{font-size:13px;color:var(--muted);font-weight:500}
+.bars{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px 16px}
+.bar{display:grid;grid-template-columns:1.6em 1fr auto;gap:6px;align-items:center;font-size:12px}
+.bar .k{font-family:var(--font-num);font-weight:600;color:var(--sign-blue)}
+.bar .track{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.bar .fill{height:100%;background:var(--sign-green)}
+.bar .n{font-family:var(--font-num);color:var(--muted);font-variant-numeric:tabular-nums}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+
+.areahead{margin-block:26px 8px;display:flex;gap:10px;align-items:baseline}
+.areahead .k{font-family:var(--font-num);font-weight:600;background:var(--sign-yellow);color:#18212e;border-radius:4px;padding:0 7px;font-size:13px}
+.areahead h2{font-size:16px;margin:0;font-weight:600}
+.areahead .c{font-size:12px;color:var(--muted);font-family:var(--font-num)}
+
+.q{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 14px 12px;margin-bottom:10px;display:grid;gap:10px;border-left:4px solid var(--line)}
+.q.ok{border-left-color:var(--sign-green)}
+.q.ng{border-left-color:var(--sign-red)}
+.qhead{display:flex;gap:10px;align-items:flex-start}
+.qno{font-family:var(--font-num);font-weight:600;font-size:13px;color:var(--sign-blue);min-width:3.2em;padding-top:1px}
+.qtext{min-width:0;flex:1;font-weight:500}
+.qtext .blank{display:inline-block;min-width:3.4em;border-bottom:2px solid var(--sign-blue);text-align:center;font-family:var(--font-num);font-weight:600;color:var(--sign-blue);margin-inline:2px}
+.ox{display:flex;gap:8px;padding-left:calc(3.2em + 10px)}
+.oxb{width:56px;height:44px;border-radius:8px;border:1.5px solid var(--line);background:var(--bg);font-size:20px;font-weight:700;cursor:pointer;font-family:var(--font-num)}
+.oxb[aria-pressed="true"]{border-color:var(--sign-blue);background:var(--sign-blue-soft);color:var(--sign-blue)}
+.opts{display:grid;gap:4px;padding-left:calc(3.2em + 10px)}
+.opt{display:grid;grid-template-columns:auto 1.6em 1fr;gap:6px;align-items:start;padding:5px 8px;border-radius:6px;border:1px solid transparent;cursor:pointer}
+.opt:hover{background:var(--bg)}
+.opt input{margin-top:5px;accent-color:var(--sign-blue)}
+.q.ok .opt,.q.ng .opt{cursor:default}
+.oxb:disabled{cursor:default;opacity:.85}
+.fill-row input:disabled{color:var(--ink);opacity:1}
+.opt .n{font-family:var(--font-num);color:var(--muted)}
+.opt span:last-child{min-width:0}
+.opt.right{background:var(--sign-green-soft)}
+.opt.miss{background:var(--sign-green-soft);outline:1.5px dashed var(--sign-green)}
+.opt.wrong{background:var(--sign-red-soft)}
+.fills{display:grid;gap:6px;padding-left:calc(3.2em + 10px)}
+.fill-row{display:flex;gap:8px;align-items:center}
+.fill-row .lab{font-family:var(--font-num);font-weight:600;color:var(--sign-blue);width:1.8em}
+.fill-row input{flex:1;min-width:0;border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:7px 10px}
+.fill-row input.right{border-color:var(--sign-green);background:var(--sign-green-soft)}
+.fill-row input.wrong{border-color:var(--sign-red);background:var(--sign-red-soft)}
+.qfoot{display:flex;gap:8px;align-items:center;padding-left:calc(3.2em + 10px);flex-wrap:wrap}
+.verdict{font-size:13px;font-weight:600}
+.verdict.ok{color:var(--sign-green)} .verdict.ng{color:var(--sign-red)}
+.ans{padding:10px 12px;border-radius:8px;background:var(--sign-yellow-soft);font-size:13.5px;margin-left:calc(3.2em + 10px);display:grid;gap:3px}
+.ans .a{font-weight:600}
+.ans .x{color:var(--muted)}
+.type-tag{font-size:11px;border:1px solid var(--line);border-radius:4px;padding:0 5px;color:var(--muted);margin-left:6px;white-space:nowrap}
+.empty{padding:40px 0;text-align:center;color:var(--muted)}
+.copybox{width:100%;min-height:120px;font-family:var(--font-num);font-size:12px;border:1px solid var(--line);border-radius:6px;background:var(--bg);padding:8px}
+footer{margin-top:30px;font-size:12px;color:var(--muted);display:grid;gap:4px}
+@media (max-width:520px){
+  .ox,.opts,.fills,.qfoot,.ans{padding-left:0;margin-left:0}
+  .qno{min-width:2.8em}
+}
+@media print{
+  nav.tabs,.score,.qfoot,.who,.tools{display:none!important}
+  body{background:#fff;color:#000}
+  .q{break-inside:avoid;border:1px solid #bbb}
+}
+
+.report{margin-block:16px;background:var(--paper);border:2px solid var(--sign-blue);border-radius:12px;padding:16px;display:grid;gap:14px}
+.report h2{margin:0;font-size:19px;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline}
+.report h2 small{font-size:13px;font-weight:500;color:var(--muted)}
+.report h3{margin:0 0 6px;font-size:15px}
+.rp-total{display:flex;flex-wrap:wrap;gap:10px}
+.rp-total div{flex:1 1 140px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:grid}
+.rp-total b{font-family:var(--font-num);font-size:24px}
+.rp-total span{font-size:12px;color:var(--muted)}
+.rp-wrap{overflow-x:auto}
+.rp-table{border-collapse:collapse;width:100%;min-width:480px;font-size:13.5px;font-variant-numeric:tabular-nums}
+.rp-table th,.rp-table td{border:1px solid var(--line);padding:6px 8px;text-align:center}
+.rp-table th{background:var(--bg);font-weight:600}
+.rp-table td:first-child,.rp-table th:first-child{text-align:left}
+.rp-table tr.sum td{font-weight:700;background:var(--sign-blue-soft)}
+.grade{display:inline-block;min-width:2.2em;border-radius:4px;padding:0 6px;font-weight:700;font-family:var(--font-num)}
+.g-hi{background:var(--sign-green-soft);color:var(--sign-green)} .g-mid{background:var(--sign-yellow-soft);color:var(--ink)} .g-lo{background:var(--sign-red-soft);color:var(--sign-red)}
+.rp-areas{display:grid;gap:4px}
+.rp-area{display:grid;grid-template-columns:2.2em minmax(0,15em) 1fr 6.5em 3em;gap:8px;align-items:center;font-size:13px}
+@media (max-width:560px){.rp-area{grid-template-columns:2.2em 1fr 5.5em 3em}.rp-area .bar2{display:none}}
+.rp-area .nm{min-width:0}
+.rp-area .k{font-family:var(--font-num);font-weight:600;color:var(--sign-blue)}
+.rp-area .bar2{height:7px;background:var(--line);border-radius:4px;overflow:hidden}
+.rp-area .bar2 i{display:block;height:100%;background:var(--sign-green)}
+.rp-area.weak .bar2 i{background:var(--sign-red)}
+.rp-area .v{font-family:var(--font-num);text-align:right;color:var(--muted)}
+.rp-wrong{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.rp-wrong li{border-left:3px solid var(--sign-red);background:var(--bg);border-radius:6px;padding:8px 10px;font-size:13.5px;display:grid;gap:2px}
+.rp-wrong .xp{color:var(--ink,#1d2733);background:#fff8e1;border-radius:6px;padding:6px 8px;margin-top:4px;line-height:1.55}
+.note-sec{display:grid;gap:12px}
+.note-sec h2{margin:0;font-size:20px}
+.note-sec .ninfo{color:var(--muted);font-size:13px}
+.note-sec .ncard{border:1px solid var(--line);border-left:5px solid var(--sign-red,#c0392b);border-radius:10px;background:var(--paper,#fff);padding:12px 14px;display:grid;gap:6px}
+.note-sec .ncard .nh{display:flex;gap:6px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.note-sec .ncard .nh b{color:var(--ink,#1d2733)}
+.note-sec .ncard .nq{font-weight:700;line-height:1.5}
+.note-sec .nopts{margin:0;padding-left:0;list-style:none;display:grid;gap:3px;font-size:13.5px}
+.note-sec .nopts li.c{color:var(--sign-green,#1f9d63);font-weight:700}
+.note-sec .nopts li.m{text-decoration:line-through;color:var(--sign-red,#c0392b)}
+.note-sec .nmy{color:var(--sign-red,#c0392b)}
+.note-sec .nok{color:var(--sign-green,#1f9d63);font-weight:700}
+.note-sec .nxp{background:#fff8e1;border-radius:8px;padding:8px 10px;line-height:1.6}
+.note-sec .ntools{display:flex;gap:8px;flex-wrap:wrap}
+.rp-wrong .meta2{font-size:12px;color:var(--muted)}
+.rp-wrong .my{color:var(--sign-red)} .rp-wrong .ok{color:var(--sign-green);font-weight:600}
+.rp-tools{display:flex;flex-wrap:wrap;gap:6px}
+.done-banner{background:var(--sign-green-soft);color:var(--sign-green);border-radius:8px;padding:8px 12px;font-weight:600;font-size:14px}
+@media print{.report{border:1px solid #888}.rp-tools{display:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.bogi{margin-left:calc(3.2em + 10px);border:1.5px solid var(--line);border-radius:8px;padding:8px 10px 6px;position:relative}
+.bogi::before{content:"보기";position:absolute;top:-10px;left:10px;background:var(--paper);padding:0 6px;font-size:12px;font-weight:700;color:var(--sign-blue)}
+.bogi .opts{padding-left:0}
+.match{display:grid;gap:8px;padding-left:calc(3.2em + 10px)}
+.match .rlist{border:1.5px solid var(--line);border-radius:8px;padding:8px 10px;display:grid;gap:3px;font-size:14px}
+.match .rlist b{font-family:var(--font-num);color:var(--sign-blue);margin-right:4px}
+.mrow{display:grid;grid-template-columns:1.8em 1fr auto;gap:8px;align-items:center}
+.mrow .lab{font-family:var(--font-num);font-weight:600;color:var(--sign-blue)}
+.mrow select{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:6px 8px;font-size:15px;min-width:4.6em;color:inherit}
+.mrow select.right{border-color:var(--sign-green);background:var(--sign-green-soft)}
+.mrow select.wrong{border-color:var(--sign-red);background:var(--sign-red-soft)}
+@media (max-width:520px){.bogi,.match{margin-left:0;padding-left:0}.bogi{padding-left:10px}}
+</style>
+
+</head>
+<body>
+<div class="gate" id="gate" hidden role="dialog" aria-modal="true" aria-labelledby="gTitle"><div class="gcard">
+  <h2 id="gTitle">이름을 입력하세요</h2>
+  <p>이름(학번)을 입력해야 문제를 풀 수 있어요. 입력한 이름은 성적표에 표시됩니다.</p>
+  <input id="gName" type="text" maxlength="30" placeholder="예: 2학년 3반 홍길동" autocomplete="off" aria-label="이름(학번)">
+  <div class="gerr" id="gErr" aria-live="polite"></div>
+  <button type="button" id="gGo" disabled>문제 풀기 시작</button>
+</div></div>
+<div class="wrap">
+  <header class="top">
+    <div class="hazard" aria-hidden="true"></div>
+    <h1>전자기기생산 통합 문제은행 19회 · 단위별 15문항 (진위·선다·연결·단답·완성형)</h1>
+    <div class="meta">
+      <span>전자기기생산_L2 · 지금 푸는 단위 <b id="ucode"></b></span>
+      <span>능력단위 <b>3</b>개 · 단위마다 진위형(OX) <b>5</b> · 선다형·연결형 <b>5</b> · 단답·완성형(단수·복수) <b>5</b></span>
+      <span>총 <b>45</b>문항</span>
+    </div>
+    <div class="who">
+      <label for="stu">이름(학번)</label>
+      <input id="stu" type="text" placeholder="이름을 먼저 입력하세요" autocomplete="off" readonly><button class="chg" type="button" id="stuChg">이름 변경</button>
+    </div>
+  </header>
+
+  <nav class="tabs" aria-label="문제 유형">
+    <div class="unitrow" role="tablist" id="unitrow" aria-label="능력단위"></div>
+    <div class="tabrow" role="tablist" id="tabrow"></div>
+    <div class="chips" id="chips" aria-label="영역 필터"></div>
+    <div class="tools">
+      <button class="btn primary" id="gradeAll" type="button">보이는 문제 모두 채점</button>
+      <button class="btn" id="resetTab" type="button">다시 풀기</button>
+      <button class="btn" id="showReport" type="button">성적표</button>
+      <button class="btn" id="showNote" type="button">오답노트</button>
+      <button class="btn" id="copyRes" type="button">결과 복사</button>
+    </div>
+  </nav>
+
+  <section class="report" id="report" hidden aria-live="polite"></section>
+  <section class="report note-sec" id="note" hidden aria-live="polite"></section>
+  <section class="score" id="score" aria-live="polite"></section>
+  <div id="copyWrap" hidden><textarea class="copybox" id="copyText" readonly aria-label="복사할 결과"></textarea><p class="note">자동 복사가 막혀 있으면 위 내용을 길게 눌러 복사하세요.</p></div>
+
+  <main id="list"></main>
+
+  <footer>
+    <span>출처: NCS 학습모듈 「전자제품생산 안전관리」(LM1902010212), 「전자제품 출하관리」(LM1902010210), 「전자부품 생산활동」(LM1902020208), 수업 요약 자료, 일학습병행 지필평가 기출, 수시평가 문제 은행.</span>
+    <span>수치와 기준은 교재 기준입니다. 안전관리의 교육 시간은 현행 법령과 다를 수 있으니 시험 범위 기준을 따르세요.</span>
+  </footer>
+</div>
+
+<script>
+function pick(arr,n,fb){arr=arr.filter(x=>!x.en);const seen=new Set(),out=[];const ar=x=>Array.isArray(x)?x[0]:x.a;for(const x of arr){if(out.length<n&&!seen.has(ar(x))){seen.add(ar(x));out.push(x)}}for(const x of arr){if(out.length<n&&!out.includes(x))out.push(x)}if(fb&&!out.some(x=>x.t==="s")){const s=arr.find(x=>x.t==="s");if(s)out[out.length-1]=s}return arr.filter(x=>out.includes(x))}
+const UNITS=[
+(function(){
+const AREAS = {
+  A: "안전관리 용어·산업안전보건법·통계",
+  B: "안전보건관리 계획·위험성 평가",
+  C: "법정 안전보건교육·교육 면제",
+  D: "작업환경 개선 대책·노출 관리 원칙",
+  E: "교육 원칙·교육 방법",
+  F: "표지·보호구·MSDS",
+  G: "작업환경 측정",
+  H: "환경관리 프로세스",
+  I: "산업안전보건 구성원 직무"
+};
+
+const OX = [
+["A", "상해는 사고를 통해 물적 피해를 초래하는 경우를 말한다.", "X", "상해는 사고를 통해 인적 피해를 초래하는 경우다."],
+["G", "작업 환경 측정은 유해 인자에 대한 근로자의 노출 정도를 측정·평가하여 적절한 대책을 강구하기 위한 것이다.", "O", "시설·설비 개선 등 대책을 강구하기 위한 측정이다."],
+["B", "안전보건 관리 계획의 기간은 안전 관리 계획을 시작하는 시점부터 지속되는 기간이다.", "O", "구성: 기본방침, 기간, 슬로건, 목표, 중점 시책 실시 촉진 방법, 예산편성, 추진율."],
+["E", "시청각 교육법은 소수의 대상자만 교육할 수 있는 방법이다.", "X", "시청각 교육법은 교육 매체를 이용해 다수의 대상자를 동시에 교육할 수 있다."],
+["I", "관리 감독자는 당해 작업장의 정리 정돈 및 통로 확보를 확인·감독한다.", "O", "관리 감독자의 직무다."]
+];
+
+const MC = [
+["A", "다음 [보기] 중 산업 재해의 정의에 원인으로 포함된 것을 3가지 고르시오.", ["*건설물", "*원자재", "*분진", "개인적인 여가 활동", "업무와 무관한 개인 용무", "업무 외 운동"], "건설물, 설비, 원자재, 가스, 증기, 분진 등에 의하거나 업무에 기인한 사망·부상·질병."],
+["D", "다음 [보기] 중 노출 근로자 관리 방법에 해당하는 것을 3가지 고르시오.", ["*교육", "*훈련", "*보호구 착용", "제거", "대체", "거리 증가"], "제거·대체는 오염원 관리, 거리 증가는 실내 공기 관리."],
+["G", "다음 [보기] 중 작업환경 측정 대상 유해 인자 분류와 종 수가 바르게 짝지어진 것을 2가지 고르시오.", ["*유기화합물 - 113종", "*금속류 - 23종", "분진 - 15종", "가스상 물질 - 6종", "물리적 인자 - 14종", "허가 대상 물질 - 2종"], "산·알칼리류 17, 가스상 15, 허가 대상 14, 물리적 인자 2, 분진 6종."],
+{t:"m",a:"H",q:"환경관리 프로세스 단계와 관련 내용을 바르게 연결하시오.",pairs:[["계획", "최고 경영자의 승인"], ["측정", "작업 환경 측정 기관의 측정 실시"], ["개선", "전체 측정 결과 보고서를 노동부에 보고"], ["관리", "특수 건강 진단 대상자 선정 자료로 활용"]],exp:"관리 단계는 기록물 관리라고도 한다."},
+{t:"m",a:"I",q:"산업 안전 보건 관리 구성원과 직무를 바르게 연결하시오.",pairs:[["관리 감독자", "산업 재해에 관한 보고 및 응급조치"], ["안전 관리자", "당해 사업장 안전 교육 계획의 수립 및 실시"], ["사업주", "국가에서 시행하는 산업 재해 예방 시책 준수"]],exp:"구성원별 직무를 구분하자."}
+];
+
+const FB = [
+{t:"b",a:"A",q:"위험성 평가는 유해·위험 요인을 파악하고 부상 또는 질병의 발생 가능성(( ① ))과 중대성(( ② ))을 추정·결정하고 감소 대책을 수립하여 실행하는 일련의 과정이다.",ans:[["빈도"], ["강도"]],exp:"도수율과 강도율 표시는 목표 설정 방법이다."},
+{t:"s",a:"C",q:"유해하거나 위험한 작업에서 근로자를 근무하게 할 때 실시해야 하는 안전 보건 교육은?",n:1,pool:[["특별 교육", "특별교육"]],exp:"일용 근로자 2시간 이상, 그 외 16시간 이상."},
+{t:"b",a:"F",q:"안전모는 물체가 떨어지거나 근로자가 ( ① )할 위험이 있는 작업에, 안전화는 물체의 충격 및 낙하, 물체에 ( ② ), 정전기 및 감전의 위험이 있는 작업에 지급한다.",ans:[["추락"], ["끼임"]],exp:"안전대는 2미터 이상 높이 또는 깊이에서 추락 위험이 있는 작업."},
+{t:"s",a:"E",q:"문제의 인식, 해결 방법의 연구 계획, 자료의 수집, 해결 방법의 제시, 정리 및 결과 검토의 5단계로 구성된 토의법은?",n:1,pool:[["문제법"]],exp:"토의법: 문제법, 사례 연구, 포럼, 심포지엄, 패널 디스커션, 버즈 세션."},
+{t:"s",a:"B",q:"안전보건 관리 계획 구성 중, 계획을 조직적으로 실행할 방향성을 결정하며 사업주의 산업 재해 방지 의지를 나타낸 것은?",n:1,pool:[["기본방침", "기본 방침"]],exp:"슬로건은 목표를 홍보하는 문구다."}
+];
+
+return {key:"S",name:"안전관리",code:"LM1902010212",AREAS,OX:pick(OX,5),MC:pick(MC,5),FB:pick(FB,5,true)};})(),
+(function(){
+const AREAS = {
+  A: "포장의 정의·기능·규격·취급",
+  B: "창고 관리 시스템(WMS·MES·ERP)",
+  C: "출하 검사·로트·AQL 판정",
+  D: "부적합품 관리·처리",
+  E: "보관의 개념·기능·창고 기능",
+  F: "보관의 원칙"
+};
+
+const OX = [
+["B", "ERP는 전사적 자원 관리 시스템 또는 전사적 통합 시스템이라고 한다.", "O", "ERP: enterprise resource planning."],
+["C", "출하 검사 결과는 검사원이 출하 검사 성적서에 기록한다.", "O", "품질 팀장이 성적서를 승인한다."],
+["E", "보관의 역할 중 하나는 생산과 판매의 조정 및 완충 역할이다.", "O", "그 밖에 고객서비스의 최전선, 운송과 배송의 윤활유 역할 등이 있다."],
+["F", "통로 대면 보관의 원칙은 용적 효율의 향상을 위해 물품을 높게 쌓는 원칙이다.", "X", "설명은 높이 쌓기의 원칙이다."],
+["D", "폐기는 부적합품을 일부 수정하여 사용 요구 조건을 만족시키는 처리 방법이다.", "X", "폐기는 재작성이나 수정으로도 요구 사항을 만족시킬 수 없을 때 작업을 무효화하는 것이다."]
+];
+
+const MC = [
+["B", "다음 [보기] 중 WMS와 상호 연계하여 자동화의 범위를 확대하는 시스템을 2가지 고르시오.", ["*MES", "*ERP", "CAD", "POS", "CAM", "GPS"], "WMS는 MES 및 ERP와 연계해 정보의 신뢰성과 가용성을 높인다."],
+["C", "다음 [보기] 중 샘플링 검사를 실시하는 경우를 3가지 고르시오.", ["*성능을 알기 위해 물품을 파괴해야 하는 경우", "*연속체나 대량품으로 모든 제품을 검사하기 곤란한 경우", "*약간의 부적합품을 허용하는 편이 경제적인 경우", "부적합품이 조금이라도 허용되지 않는 경우", "검사 비용에 비해 효과가 클 경우", "고객이 전수 검사를 요구한 경우"], "나머지는 전수 검사를 하는 경우다."],
+["E", "다음 [보기] 중 창고의 기능이 ‘아닌’ 것을 2가지 고르시오.", ["*품질 설계 기능", "*판매 가격 책정 기능", "저장 기능", "연결 기능", "유통 가공 기능", "수급 조정 기능"], "창고 기능: 저장, 수급 조정, 가격 조정, 대단위 장거리 수송, 연결, 유통 가공."],
+{t:"m",a:"D",q:"부적합품 관련 용어와 설명을 바르게 연결하시오.",pairs:[["의심스러운 제품", "합부 판정이 불분명하거나 오용·혼용 우려가 있는 제품"], ["부적합품", "품질 특성이 규정된 요구 사항에서 벗어난 제품"], ["NCR", "부적합 보고서(nonconformance report)"], ["재작성", "본래의 요건에 맞도록 처음부터 다시 작성"]],exp:"NCR은 부적합품 관리 대장에서 일괄 관리한다."},
+{t:"m",a:"E",q:"보관의 목적과 내용을 바르게 연결하시오.",pairs:[["수송비와 생산비", "절감"], ["생산 측면에서의 이점", "숙성, 세금의 연기"], ["마케팅 측면에서의 이점", "신속한 배달로 서비스 향상, 상품의 가치 상승"]],exp:"수요와 공급의 ‘조정’도 보관의 목적이다."}
+];
+
+const FB = [
+{t:"b",a:"D",q:"부적합 사항의 처리 방안 수립과 작업지시는 ( ① )이(가), 부적합품 처리에 대한 승인은 ( ② )이(가) 한다.",ans:[["관련 부서장", "관련부서장"], ["대표이사", "대표 이사"]],exp:"판정과 조치·재검사 요구는 주관 부서장이 한다."},
+{t:"s",a:"B",q:"생산 관리 시스템(MES)의 4가지 기능 중 2가지를 쓰시오.",n:2,pool:[["생산물류 정보", "물류"], ["품질 데이터 수집", "품질"], ["생산 기타 정보", "기타"], ["생산 운전 정보", "운전"]],exp:"생산물류 정보, 품질 데이터 수집, 생산 기타 정보, 생산 운전 정보."},
+{t:"b",a:"F",q:"( ① )의 원칙은 동일 품종은 동일 장소에, 유사품은 근처 가까운 장소에 보관하는 원칙이고, ( ② )의 원칙은 장소·선반 번호 등의 위치를 표시하는 원칙이다.",ans:[["동일성·유사성", "동일성유사성", "동일성-유사성", "동일성 유사성"], ["위치 표시", "위치표시"]],exp:"보관의 원칙 10가지를 정리하자."},
+{t:"s",a:"C",q:"전 회 발생된 문제점에 대해 중점적으로 차기 로트를 검사하는 출하 검사 방법은?",n:1,pool:[["체크 검사", "체크검사", "체크"]],exp:"샘플링 검사, 전수 검사, 체크 검사."},
+{t:"s",a:"E",q:"보관의 목적 4가지 중 2가지를 쓰시오.",n:2,pool:[["수송비와 생산비의 절감", "수송비", "생산비", "절감"], ["수요와 공급의 조정", "조정"], ["생산 측면에서의 이점", "생산 측면", "숙성"], ["마케팅 측면에서의 이점", "마케팅"]],exp:"수송비·생산비 절감, 수요·공급 조정, 생산 측면 이점, 마케팅 측면 이점."}
+];
+
+return {key:"H",name:"출하관리",code:"LM1902010210",AREAS,OX:pick(OX,5),MC:pick(MC,5),FB:pick(FB,5,true)};})(),
+(function(){
+const AREAS = {
+  A: "생산계획·총괄생산계획·대응 전략",
+  B: "일정계획·작업 우선순위 규칙",
+  C: "생산계획서·작업지시서·제조공정도",
+  D: "측정 시스템 분석(MSA)",
+  E: "생산진도 관리·진도관리 도표",
+  F: "문제 원인 분석·개선 도구·작업일지"
+};
+
+const OX = [
+["B", "EDD 규칙은 대기 중인 작업 중 납기가 가장 빠른 것부터 작업하는 방식이다.", "O", "Earliest Due Date."],
+["A", "총괄생산계획은 수요의 변동을 흡수하기 위해 기업이 사용하는 정책이나 절차로서의 장기생산계획이다.", "X", "총괄생산계획은 중기생산계획이다."],
+["C", "작업지시서의 관련자료는 최종조립 및 제작을 위한 지침을 의미한다.", "O", "작업지시서 항목: 종류, 형식, 제작번호, 작업 장소, 관련자료, 순번, 작업내용, 일자, 확인자."],
+["F", "파레토 차트에 따르면 중요한 20%의 원인이 전체 문제의 80%를 발생시킨다.", "O", "20:80의 법칙."],
+["E", "네트워크도는 생산진도 관리를 위한 도구로 쓰이지 않는다.", "X", "네트워크도는 생산 진도 관리를 위한 도구로 쓰인다."]
+];
+
+const MC = [
+["C", "다음 [보기] 중 적정재고에 대한 설명으로 옳은 것을 2가지 고르시오.", ["*재고투자 절감의 경제성과 적기 수요 충족의 효과성을 동시에 만족시키는 재고 수준이다", "*계속 공급 원칙과 경제성 확보 원칙이 균형을 이루는 점에서 성립된다", "회계개시일의 이월재고를 말한다", "시간당 생산되는 제품의 수를 말한다", "무제한의 재고 확보로 수요를 지원한다", "초과 재고가 많을수록 바람직하다"], "이월재고는 기초재고, 시간당 생산량은 UPH."],
+["D", "다음 [보기] 중 측정 시스템 분석의 ‘측정 중’ 고려사항을 2가지 고르시오.", ["*측정 요소 번호를 찾을 수 없도록 측정은 임의로 수행한다", "*정해진 방법 및 절차에 따라 측정 장비로 샘플을 측정한다", "사람, 샘플 및 반복 측정 수치를 고정한다", "전체 프로세스를 표시할 수 있는 샘플을 뽑는다", "측정자가 결과를 보고 측정 방법을 바꾼다", "평가자 수는 기록하지 않는다"], "고정과 대표 샘플 선정은 측정 전 고려사항이다."],
+["A", "다음 [보기] 중 단기계획(1개월 이내)에 해당하는 것을 2가지 고르시오.", ["*일정계획", "*능력소요계획", "총괄생산계획", "생산수량계획", "공정설계", "입지 및 시설배치"], "단기계획: 일정계획, 자재소요계획, 능력소요계획."],
+{t:"m",a:"F",q:"생산문제 원인 분석 방법과 형태를 바르게 연결하시오.",pairs:[["파레토 차트", "막대그래프"], ["특성요인도", "물고기 뼈 그림"], ["산점도", "두 변수 관계의 시각적 표현"]],exp:"체크시트는 누락·오류를 없애기 위한 간단한 체크 도표다."},
+{t:"m",a:"E",q:"생산진도 관리 도구와 특징을 바르게 연결하시오.",pairs:[["간트 차트", "종축에 공사명, 횡축에 날짜를 표기한 막대그래프"], ["마일스톤 차트", "중요한 계획기간을 이정표로 표시"], ["네트워크도", "활동의 선후관계와 주경로(Critical Path)"]],exp:"간트 차트는 작업 상호 간 의존관계를 나타내지 못한다."}
+];
+
+const FB = [
+{t:"b",a:"A",q:"총괄생산계획이란 여러 종류의 ( ① )을 ( ② )와 관련지어서 전반적으로 계획하고 일정계획을 세우는 것을 말한다.",ans:[["생산능력원", "생산 능력원"], ["수요"]],exp:"계획대상기간 동안 생산능력원을 수요처에 할당한다."},
+{t:"s",a:"C",q:"시간당 생산량으로, 총 생산 제품수를 조업시간으로 나눈 값을 영문 약어로 쓰시오.",n:1,pool:[["UPH", "Unit Per Hour"]],exp:"UPH는 생산계획서 항목이다."},
+{t:"b",a:"D",q:"반복성은 측정값의 ( ① )를 추정하고, 재현성은 다른 사람이 측정할 때 발생하는 차이에 의한 ( ② )을 추정한다.",ans:[["범위"], ["평균"]],exp:"반복성: 한 명의 측정자, 데이터의 분산."},
+{t:"s",a:"B",q:"대기 중인 작업 중 여유시간이 가장 작은 것부터 처리하는 우선순위 규칙을 영문 약어로 쓰시오.",n:1,pool:[["MST", "Minimum Slack Time"]],exp:"여유시간 = 납기까지 남은 시간 − 작업 소요시간."},
+{t:"s",a:"F",q:"생산문제 원인 분석 방법 4가지 중 2가지를 쓰시오.",n:2,pool:[["파레토 차트", "파레토"], ["특성요인도", "특성"], ["체크시트", "체크"], ["산점도", "산점"]],exp:"파레토 차트, 특성요인도, 체크시트, 산점도."}
+];
+
+return {key:"P",name:"생산활동",code:"LM1902020208",AREAS,OX:pick(OX,5),MC:pick(MC,5),FB:pick(FB,5,true)};})()
+];
+(function(){
+let U,AREAS,AREA_KEYS,TYPES;
+function buildTypes(u){const OX=u.OX,MC=u.MC,FB=u.FB,P=u.key+"-";return [
+  {id:"ox",name:"진위형(OX)",sub:"100문항",items:OX.map((x,i)=>({id:P+"OX-"+pad(i+1),no:i+1,a:x[0],q:x[1],ans:x[2],exp:x[3]}))},
+  {id:"mc",name:"선다형·연결형",sub:"",items:MC.map((x,i)=>{if(!Array.isArray(x)){const R=seeded(x.pairs.map((p,j)=>({t:p[1],j})),i*3+11+P.charCodeAt(0)*17);return Object.assign({id:P+"MC-"+pad(i+1),no:i+1,R},x)}const o=x[2].map((t,j)=>({t:t.replace(/^\*/,""),c:t[0]==="*",j}));return {id:P+"MC-"+pad(i+1),no:i+1,a:x[0],q:x[1],opts:seeded(o,i*5+7+P.charCodeAt(0)*13),exp:x[3]}})},
+  {id:"fb",name:"단답·완성형",sub:"",items:FB.map((x,i)=>Object.assign({id:P+"FB-"+pad(i+1),no:i+1},x))}
+]}
+function setUnit(){U=UNITS.find(u=>u.key===state.unit)||UNITS[0];state.unit=U.key;AREAS=U.AREAS;AREA_KEYS=Object.keys(AREAS);TYPES=buildTypes(U);$("ucode").textContent=U.name+" ("+U.code+")"}
+function pad(n){return String(n).padStart(3,"0")}
+function seeded(arr,seed){const a=arr.slice();let s=seed*9301+49297;for(let i=a.length-1;i>0;i--){s=(s*9301+49297)%233280;const r=Math.floor(s/233280*(i+1));[a[i],a[r]]=[a[r],a[i]]}return a}
+const CIRC="①②③④⑤⑥⑦⑧⑨⑩",GA="ㄱㄴㄷㄹㅁㅂㅅㅇ",RA="ⓐⓑⓒⓓⓔⓕⓖ";
+const norm=s=>String(s||"").toLowerCase().replace(/[\s·.,\-()\/'"‘’“”「」\[\]:;~]/g,"");
+
+let state={unit:"S",tab:"ox",area:"all",showAns:false,seed:{},res:{},inp:{},name:""};
+try{const sv=JSON.parse(localStorage.getItem("l2-combined-set19")||"null");if(sv)Object.assign(state,sv)}catch(e){}
+function save(){try{localStorage.setItem("l2-combined-set19",JSON.stringify(state))}catch(e){}}
+
+const $=id=>document.getElementById(id);
+$("stu").value=state.name||"";
+$("stu").addEventListener("input",e=>{state.name=e.target.value;save()});
+if(!state.seed)state.seed={};setUnit();state.showAns=false;
+
+function renderUnits(){
+  $("unitrow").innerHTML=UNITS.map(u=>{const all=buildTypes(u).flatMap(t=>t.items),d=all.filter(q=>state.res[q.id]!==undefined).length;
+    return `<button class="unit" role="tab" type="button" data-u="${u.key}" aria-selected="${state.unit===u.key}"><span class="t">${u.name}</span><span class="s">${d}/${all.length}</span></button>`}).join("");
+  $("unitrow").querySelectorAll(".unit").forEach(b=>b.onclick=()=>{state.unit=b.dataset.u;state.area="all";setUnit();save();renderAll();window.scrollTo({top:0})});
+}
+function renderTabs(){
+  $("tabrow").innerHTML=TYPES.map(t=>{const done=t.items.filter(q=>state.res[q.id]!==undefined).length;
+    return `<button class="tab" role="tab" type="button" data-t="${t.id}" aria-selected="${state.tab===t.id}"><span class="t">${t.name}</span><span class="s">${done}/${t.items.length}</span></button>`}).join("");
+  $("tabrow").querySelectorAll(".tab").forEach(b=>b.onclick=()=>{state.tab=b.dataset.t;save();renderAll();window.scrollTo({top:0})});
+}
+function curType(){return TYPES.find(t=>t.id===state.tab)}
+function renderChips(){
+  const T=curType();
+  const c=k=>T.items.filter(q=>k==="all"||q.a===k).length;
+  $("chips").innerHTML=[`<button class="chip" type="button" data-a="all" aria-pressed="${state.area==="all"}">전체 ${c("all")}</button>`]
+   .concat(AREA_KEYS.map(k=>`<button class="chip" type="button" data-a="${k}" aria-pressed="${state.area===k}"><span class="k">${k}</span>${AREAS[k]} ${c(k)}</button>`)).join("");
+  $("chips").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{state.area=b.dataset.a;save();renderAll()});
+}
+function visible(){
+  const T=curType();let it=T.items.filter(q=>state.area==="all"||q.a===state.area);
+  const sd=state.seed[U.key+state.tab];if(sd)it=seeded(it,sd);
+  return it;
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+
+function qHTML(q,n){
+  const r=state.res[q.id],cls=r===undefined?"":(r?"ok":"ng"),inp=state.inp[q.id],lock=r!==undefined,dis=lock?" disabled":"";
+  let body="",text=esc(q.q),ansTxt="";
+  if(state.tab==="ox"){
+    body=`<div class="ox">${["O","X"].map(v=>`<button class="oxb" type="button" data-v="${v}" aria-pressed="${inp===v}" aria-label="${v}"${dis}>${v}</button>`).join("")}</div>`;
+    ansTxt=q.ans;
+  }else if(state.tab==="mc"&&q.t==="m"){
+    const v=inp||[],marks=state.inp[q.id+"#m"]||[];
+    body=`<div class="match"><div class="rlist">${q.R.map((o,k)=>`<span><b>${RA[k]}</b>${esc(o.t)}</span>`).join("")}</div>${q.pairs.map((p,k)=>`<div class="mrow"><span class="lab">${CIRC[k]}</span><span>${esc(p[0])}</span><select data-k="${k}" class="${marks[k]===undefined?"":(marks[k]?"right":"wrong")}" aria-label="${CIRC[k]} 연결"${dis}><option value="">선택</option>${q.R.map((o,m)=>`<option value="${o.j}" ${String(v[k])===String(o.j)?"selected":""}>${RA[m]}</option>`).join("")}</select></div>`).join("")}</div>`;
+    ansTxt=q.pairs.map((p,k)=>CIRC[k]+"-"+RA[q.R.findIndex(o=>o.j===k)]).join(", ");
+    text+=`<span class="type-tag">연결형</span>`;
+  }else if(state.tab==="mc"){
+    const sel=inp||[];const graded=r!==undefined||state.showAns;
+    const sd=state.seed[U.key+"mc"],opts=sd?seeded(q.opts,sd+q.no*31):q.opts;
+    body=`<div class="bogi"><div class="opts">${opts.map((o,k)=>{let oc="";if(graded){const ch=sel.includes(o.j);oc=o.c&&ch?"right":(o.c?"miss":(ch?"wrong":""))}
+      return `<label class="opt ${oc}"><input type="checkbox" id="${q.id}-${o.j}" data-j="${o.j}" ${sel.includes(o.j)?"checked":""}${dis}><span class="n">${GA[k]}.</span><span>${esc(o.t)}</span></label>`}).join("")}</div></div>`;
+    ansTxt=opts.map((o,k)=>o.c?GA[k]:null).filter(Boolean).join(", ");
+    text+=`<span class="type-tag">선다형 · ${q.opts.filter(o=>o.c).length}가지 선택</span>`;
+  }else{
+    if(q.t==="b"){
+      text=esc(q.q).replace(/\(\s*①\s*\)/g,'<span class="blank">①</span>').replace(/\(\s*②\s*\)/g,'<span class="blank">②</span>');
+      const v=inp||["",""],marks=state.inp[q.id+"#m"]||[];
+      body=`<div class="fills">${["①","②"].slice(0,q.ans.length).map((l,k)=>`<div class="fill-row"><span class="lab">${l}</span><input type="text" id="${q.id}-${k}" data-k="${k}" value="${esc(v[k]||"")}" class="${marks[k]===undefined?"":(marks[k]?"right":"wrong")}" autocomplete="off" aria-label="빈칸 ${l}"${dis}></div>`).join("")}</div>`;
+      ansTxt=q.ans.map((a,k)=>CIRC[k]+" "+a[0]).join("  ")+(q.any?" (순서 무관)":"");
+      text+=`<span class="type-tag">${q.ans.length>1?"복수 완성형":"완성형"}</span>`;
+    }else{
+      const v=inp||[],marks=state.inp[q.id+"#m"]||[];
+      body=`<div class="fills">${Array.from({length:q.n},(_,k)=>`<div class="fill-row"><span class="lab">${CIRC[k]}</span><input type="text" id="${q.id}-${k}" data-k="${k}" value="${esc(v[k]||"")}" class="${marks[k]===undefined?"":(marks[k]?"right":"wrong")}" autocomplete="off" aria-label="답 ${k+1}"${dis}></div>`).join("")}</div>`;
+      ansTxt=q.n===1?q.pool[0][0]:q.pool.map(p=>p[0]).join(" / ")+`  → 이 중 ${q.n}가지`;
+      text+=`<span class="type-tag">${q.n>1?"복수 단답형 · "+q.n+"개":"단답형"}</span>`;
+    }
+  }
+  const show=r!==undefined||state.showAns;
+  return `<article class="q ${cls}" data-id="${q.id}" data-n="${n}">
+    <div class="qhead"><span class="qno">${n}</span><div class="qtext">${text}</div></div>
+    ${body}
+    <div class="qfoot">${lock?"":`<button class="btn chk" type="button">채점</button>`}${r===undefined?"":`<span class="verdict ${r?"ok":"ng"}">${r?"정답":"오답"+(state.tab==="mc"&&state.inp[q.id+"#p"]?" · "+state.inp[q.id+"#p"]:"")}</span>`}</div>
+    ${show?`<div class="ans"><span class="a">정답: ${esc(ansTxt)}</span><span class="x">${esc(q.exp)}</span></div>`:""}
+  </article>`;
+}
+
+function grade(q){
+  const inp=state.inp[q.id];
+  if(state.tab==="ox"){if(!inp)return;state.res[q.id]=inp===q.ans;return}
+  if(state.tab==="mc"&&q.t==="m"){const v=inp||[];if(!v.some(x=>x!==""&&x!==undefined))return;const k=q.pairs.map((p,i)=>String(v[i])===String(i));state.inp[q.id+"#m"]=k;state.res[q.id]=k.every(Boolean);return}
+  if(state.tab==="mc"){const sel=inp||[];if(!sel.length)return;
+    const cor=q.opts.filter(o=>o.c).map(o=>o.j);const hit=sel.filter(j=>cor.includes(j)).length,bad=sel.length-hit;
+    state.res[q.id]=hit===cor.length&&bad===0;state.inp[q.id+"#p"]=`정답 ${cor.length}개 중 ${hit}개 선택`+(bad?`, 오선택 ${bad}개`:"");return}
+  const v=(inp||[]).map(norm);if(!v.some(Boolean))return;
+  if(q.t==="b"){
+    const m=(x,alts)=>alts.some(a=>norm(a)===x);
+    let k=q.ans.map((a,i)=>m(v[i],a));
+    if(q.any&&q.ans.length===2&&!(k[0]&&k[1])){const sw=[m(v[0],q.ans[1]),m(v[1],q.ans[0])];if(sw[0]&&sw[1])k=sw}
+    state.inp[q.id+"#m"]=k;state.res[q.id]=k.every(Boolean);
+  }else{
+    const used=new Set(),k=[];
+    for(let i=0;i<q.n;i++){const x=v[i]||"";let ok=false;
+      if(x.length>=2)for(let p=0;p<q.pool.length;p++){if(used.has(p))continue;const kws=[q.pool[p][0]].concat(q.pool[p].slice(1)).map(norm);
+        if(kws.some(w=>w&&(x.includes(w)||(x.length>=3&&w.includes(x))))){used.add(p);ok=true;break}}
+      k.push(ok)}
+    state.inp[q.id+"#m"]=k;state.res[q.id]=k.every(Boolean);
+  }
+}
+
+function renderList(){
+  const it=visible();
+  if(!it.length){$("list").innerHTML='<p class="empty">이 영역에는 문항이 없습니다.</p>';return}
+  let html="",last=null;
+  it.forEach((q,i)=>{if(!state.seed[U.key+state.tab]&&q.a!==last){last=q.a;const n=it.filter(x=>x.a===q.a).length;
+      html+=`<div class="areahead"><span class="k">${q.a}</span><h2>${AREAS[q.a]}</h2><span class="c">${n}문항</span></div>`}
+    html+=qHTML(q,i+1)});
+  $("list").innerHTML=html;
+}
+function renderScore(){
+  const T=curType(),it=T.items;const done=it.filter(q=>state.res[q.id]!==undefined),ok=done.filter(q=>state.res[q.id]);
+  const pct=done.length?Math.round(ok.length/done.length*100):0;
+  const bars=AREA_KEYS.map(k=>{const a=it.filter(q=>q.a===k),d=a.filter(q=>state.res[q.id]!==undefined),o=d.filter(q=>state.res[q.id]);
+    const w=d.length?o.length/d.length*100:0;return `<div class="bar" title="${AREAS[k]}"><span class="k">${k}</span><span class="track"><span class="fill" style="width:${w}%;display:block"></span></span><span class="n">${o.length}/${d.length}/${a.length}</span></div>`}).join("");
+  $("score").innerHTML=`<div class="head"><span class="big">${ok.length}<small> / ${done.length} 채점 · 정답률 ${pct}%</small></span><span class="note">${T.name} ${it.length}문항 중 ${done.length}문항 채점됨</span></div>
+    <div class="bars">${bars}</div><p class="note">영역별 막대: 맞힌 수 / 채점한 수 / 전체 문항 수</p>`;
+}
+function renderAll(){renderUnits();renderTabs();renderChips();renderList();renderScore()}
+
+$("list").addEventListener("click",e=>{
+  const art=e.target.closest(".q");if(!art)return;const T=curType(),q=T.items.find(x=>x.id===art.dataset.id);
+  if(state.res[q.id]!==undefined)return;
+  if(e.target.closest(".oxb")){state.inp[q.id]=e.target.closest(".oxb").dataset.v;save();art.outerHTML=qHTML(q,art.dataset.n);return}
+  if(e.target.closest(".chk")){collect(art,q);grade(q);save();art.outerHTML=qHTML(q,art.dataset.n);renderScore();renderTabs()}
+});
+$("list").addEventListener("change",e=>{
+  const art=e.target.closest(".q");if(!art)return;const q=curType().items.find(x=>x.id===art.dataset.id);if(state.res[q.id]!==undefined)return;collect(art,q);save();
+});
+$("list").addEventListener("keydown",e=>{
+  if(e.key==="Enter"&&e.target.matches(".fill-row input")){const art=e.target.closest(".q");const q=curType().items.find(x=>x.id===art.dataset.id);if(state.res[q.id]!==undefined)return;collect(art,q);grade(q);save();art.outerHTML=qHTML(q,art.dataset.n);renderScore();renderTabs()}
+});
+function collect(art,q){
+  if(state.tab==="mc"&&q.t==="m"){state.inp[q.id]=[...art.querySelectorAll("select")].map(s=>s.value)}
+  else if(state.tab==="mc"){state.inp[q.id]=[...art.querySelectorAll("input:checked")].map(i=>+i.dataset.j)}
+  else if(state.tab==="fb"){state.inp[q.id]=[...art.querySelectorAll(".fill-row input")].map(i=>i.value)}
+}
+$("gradeAll").onclick=()=>{const arts=[...$("list").querySelectorAll(".q")];const T=curType();
+  arts.forEach(a=>{const q=T.items.find(x=>x.id===a.dataset.id);if(state.res[q.id]!==undefined)return;collect(a,q);grade(q)});save();renderAll()};
+$("resetTab").onclick=function(){
+  if(this.dataset.arm!=="1"){this.dataset.arm="1";this.textContent="한 번 더 누르면 답이 지워지고 섞입니다";setTimeout(()=>{this.dataset.arm="";this.textContent="다시 풀기"},3000);return}
+  curType().items.forEach(q=>{delete state.res[q.id];Object.keys(state.inp).forEach(k=>{if(k===q.id||k.startsWith(q.id+"#"))delete state.inp[k]})});
+  state.seed[U.key+state.tab]=1+Math.floor(Math.random()*999983);
+  this.dataset.arm="";this.textContent="다시 풀기";save();renderAll();window.scrollTo({top:0})};
+$("copyRes").onclick=async()=>{
+  const rows=[["이름","문항ID","유형","영역","정오"].join(",")];
+  rows[0]=["이름","능력단위","문항ID","유형","영역","정오"].join(",");const sums=[];
+  UNITS.forEach(u=>{const TT=buildTypes(u);TT.forEach(T=>T.items.forEach(q=>{if(state.res[q.id]!==undefined)rows.push([`"${(state.name||"").replace(/"/g,"'")}"`,u.name,q.id,T.name,q.a,state.res[q.id]?"O":"X"].join(","))}));
+    const all=TT.flatMap(T=>T.items),d=all.filter(q=>state.res[q.id]!==undefined);sums.push(`${u.name} ${d.filter(q=>state.res[q.id]).length}/${d.length}`)});
+  const sum=sums.join(" | ");
+  const txt=`# ${state.name||"(이름 미입력)"} · ${fDate(state.startAt||Date.now())} ${state.startAt?fTime(state.startAt):""}~${state.lastAt?fTime(state.lastAt):""} · ${sum}\n`+rows.join("\n");
+  $("copyText").value=txt;
+  try{await navigator.clipboard.writeText(txt);$("copyRes").textContent="복사됨";setTimeout(()=>$("copyRes").textContent="결과 복사",1800);$("copyWrap").hidden=true}
+  catch(err){$("copyWrap").hidden=false;$("copyText").focus();$("copyText").select()}
+};
+
+function ansOf(q,tid){
+  if(tid==="ox")return q.ans;
+  if(tid==="mc"&&q.t==="m")return q.pairs.map(p=>p[0]+" → "+p[1]).join(" / ");
+  if(tid==="mc")return q.opts.filter(o=>o.c).map(o=>o.t).join(" / ");
+  if(q.t==="b")return q.ans.map((a,k)=>CIRC[k]+" "+a[0]).join("  ");
+  if(q.n===1)return q.pool[0][0];
+  return q.pool.map(p=>p[0]).join(" / ")+` (이 중 ${q.n}가지)`;
+}
+function myOf(q,tid){
+  const v=state.inp[q.id];if(v===undefined||v===null)return "(무응답)";
+  if(tid==="ox")return v;
+  if(tid==="mc"&&q.t==="m")return q.pairs.map((p,k)=>{const o=q.R.find(o=>String(o.j)===String(v[k]));return p[0]+" → "+(o?o.t:"(미선택)")}).join(" / ");
+  if(tid==="mc")return q.opts.filter(o=>v.includes(o.j)).map(o=>o.t).join(" / ")||"(선택 없음)";
+  return v.map((x,i)=>(q.t==="b"?"①②"[i]:CIRC[i])+" "+(x||"—")).join("  ");
+}
+const gcls=p=>p>=80?"g-hi":(p>=60?"g-mid":"g-lo");
+function reportData(){
+  return UNITS.map(u=>{const TT=buildTypes(u);
+    const types=TT.map(T=>{const it=T.items,ok=it.filter(q=>state.res[q.id]===true).length,dn=it.filter(q=>state.res[q.id]!==undefined).length;return {id:T.id,name:T.name,ok,dn,total:it.length}});
+    const all=TT.flatMap(T=>T.items.map(q=>({q,T})));
+    const ok=all.filter(x=>state.res[x.q.id]===true).length,dn=all.filter(x=>state.res[x.q.id]!==undefined).length;
+    const areas=Object.keys(u.AREAS).map(k=>{const a=all.filter(x=>x.q.a===k),d=a.filter(x=>state.res[x.q.id]!==undefined),o=d.filter(x=>state.res[x.q.id]===true);return {k,name:u.AREAS[k],ok:o.length,dn:d.length,total:a.length}});
+    const wrong=all.filter(x=>state.res[x.q.id]===false);
+    return {u,types,ok,dn,total:all.length,areas,wrong}});
+}
+function renderReport(banner){
+  const D=reportData(),TOK=D.reduce((s,d)=>s+d.ok,0),TDN=D.reduce((s,d)=>s+d.dn,0),TT=D.reduce((s,d)=>s+d.total,0);
+  const score=Math.round(TOK/TT*100),acc=TDN?Math.round(TOK/TDN*100):0;
+  const now=new Date(),ds=`${now.getFullYear()}.${now.getMonth()+1}.${now.getDate()} ${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
+  const typeNames=D[0].types.map(t=>t.name);
+  const rows=D.map(d=>{const p=Math.round(d.ok/d.total*100);return `<tr><td>${d.u.name}</td>${d.types.map(t=>`<td>${t.ok}/${t.total}${t.dn<t.total?`<br><small>미채점 ${t.total-t.dn}</small>`:""}</td>`).join("")}<td>${d.ok}/${d.total}</td><td><span class="grade ${gcls(p)}">${p}</span></td></tr>`}).join("");
+  const colSum=typeNames.map((_,i)=>{const o=D.reduce((s,d)=>s+d.types[i].ok,0),t=D.reduce((s,d)=>s+d.types[i].total,0);return `<td>${o}/${t}</td>`}).join("");
+  const areaHTML=D.filter(d=>d.dn>0).map(d=>`<div><h3>${d.u.name} 영역별 정답률</h3><div class="rp-areas">${d.areas.map(a=>{const p=a.dn?Math.round(a.ok/a.dn*100):0,weak=a.dn&&p<60;
+      return `<div class="rp-area ${weak?"weak":""}" title="${esc(a.name)}"><span class="k">${a.k}${weak?" ⚠":""}</span><span class="nm">${esc(a.name)}</span><span class="bar2"><i style="width:${p}%"></i></span><span class="v">${a.ok}/${a.dn}${a.dn<a.total?` (총${a.total})`:""}</span><span class="v">${a.dn?p+"%":"-"}</span></div>`}).join("")}</div></div>`).join("");
+  const weakList=D.flatMap(d=>d.areas.filter(a=>a.dn&&a.ok/a.dn<0.6).map(a=>`${d.u.name} ${a.k}(${a.name})`));
+  const wrongs=D.flatMap(d=>d.wrong.map(x=>({u:d.u,...x})));
+  const wrongHTML=wrongs.length?`<ul class="rp-wrong">${wrongs.map(x=>`<li><span class="meta2">${x.u.name} · ${x.T.name} · ${x.q.a} ${esc(x.u.AREAS[x.q.a])} · ${x.q.id}</span><span>${esc(x.q.q)}</span><span class="my">내 답: ${esc(myOf(x.q,x.T.id))}</span><span class="ok">정답: ${esc(ansOf(x.q,x.T.id))}</span><span class="xp">💡 해설: ${esc(x.q.exp||"")}</span></li>`).join("")}</ul>`:'<p class="note">틀린 문제가 없습니다.</p>';
+  $("report").innerHTML=`${banner?`<div class="done-banner">${esc(banner)}</div>`:""}
+   <h2>성적표</h2>
+   <div class="rp-info"><div><span>이름</span><b>${esc(state.name||"(이름 미입력)")}</b></div><div><span>풀이 날짜</span><b>${fDate(state.startAt||Date.now())}</b></div><div><span>풀이 시간</span><b>${state.startAt?fTime(state.startAt):"-"} ~ ${state.lastAt?fTime(state.lastAt):"-"}</b></div><div><span>성적표 출력</span><b>${fDate(Date.now())} ${fTime(Date.now())}</b></div></div>
+   <div class="rp-total"><div><b>${score}점</b><span>100점 환산 (전체 ${TT}문항 기준)</span></div><div><b>${TOK}/${TDN}</b><span>맞힌 수 / 채점한 수 · 정답률 ${acc}%</span></div><div><b>${TT-TDN}</b><span>아직 채점하지 않은 문항</span></div></div>
+   <div><h3>능력단위·유형별 점수</h3><div class="rp-wrap"><table class="rp-table"><thead><tr><th>능력단위</th>${typeNames.map(n=>`<th>${n}</th>`).join("")}<th>합계</th><th>점수</th></tr></thead><tbody>${rows}<tr class="sum"><td>전체</td>${colSum}<td>${TOK}/${TT}</td><td><span class="grade ${gcls(score)}">${score}</span></td></tr></tbody></table></div><p class="note">점수 = 맞힌 수 ÷ 전체 문항 수 × 100 (채점하지 않은 문항은 0점). 80점 이상 초록, 60~79 노랑, 60 미만 빨강.</p></div>
+   <div><h3>보충이 필요한 영역</h3><p class="note" style="font-size:13.5px">${weakList.length?esc(weakList.join(", ")):"정답률 60% 미만인 영역이 없습니다."}</p></div>
+   ${areaHTML}
+   <div><h3>오답 노트 (${wrongs.length}문항)</h3>${wrongHTML}</div>
+   <div class="rp-tools"><button class="btn primary" type="button" id="rpCopy">성적표 복사</button><button class="btn" type="button" id="rpClose">닫기</button></div>`;
+  $("report").hidden=false;
+  $("rpClose").onclick=()=>{$("report").hidden=true};
+  $("rpCopy").onclick=async()=>{
+    const L=[`[성적표] ${state.name||"(이름 미입력)"}`,`풀이 날짜 ${fDate(state.startAt||Date.now())} · 풀이 시간 ${state.startAt?fTime(state.startAt):"-"} ~ ${state.lastAt?fTime(state.lastAt):"-"} · 출력 ${fTime(Date.now())}`,`총점 ${score}점 (맞힌 수 ${TOK}/${TT}, 채점 ${TDN})`,""];
+    D.forEach(d=>{L.push(`■ ${d.u.name}: ${d.ok}/${d.total} (${Math.round(d.ok/d.total*100)}점) — `+d.types.map(t=>`${t.name} ${t.ok}/${t.total}`).join(", "))});
+    L.push("",`보충 필요 영역: ${weakList.join(", ")||"없음"}`,"",`오답 ${wrongs.length}문항`);
+    wrongs.forEach(x=>L.push(`- [${x.u.name}/${x.T.name}/${x.q.a}] ${x.q.q}`,`   내 답: ${myOf(x.q,x.T.id)} / 정답: ${ansOf(x.q,x.T.id)}`,`   해설: ${x.q.exp||""}`));
+    const txt=L.join("\n");$("copyText").value=txt;
+    try{await navigator.clipboard.writeText(txt);$("rpCopy").textContent="복사됨";setTimeout(()=>{const b=$("rpCopy");if(b)b.textContent="성적표 복사"},1800);$("copyWrap").hidden=true}
+    catch(err){$("copyWrap").hidden=false;$("copyText").focus();$("copyText").select()}
+  };
+}
+function openReport(banner){renderReport(banner);$("report").scrollIntoView({behavior:"smooth",block:"start"})}
+$("showReport").onclick=()=>openReport("");
+const _renderScore=renderScore;
+renderScore=function(){_renderScore();
+  if(!state.doneShown)state.doneShown={};
+  const its=buildTypes(U).flatMap(T=>T.items),all=its.every(q=>state.res[q.id]!==undefined);
+  if(all&&!state.doneShown[U.key]){state.doneShown[U.key]=true;save();openReport(`${U.name} ${its.length}문항을 모두 풀었습니다.`)}
+  else if(!all&&state.doneShown[U.key]){state.doneShown[U.key]=false;save()}
+  if(!$("report").hidden)renderReport($("report").querySelector(".done-banner")?.textContent||"");
+};
+const two=n=>String(n).padStart(2,"0");
+const fDate=ts=>{const d=new Date(ts);return `${d.getFullYear()}.${two(d.getMonth()+1)}.${two(d.getDate())} (${"일월화수목금토"[d.getDay()]})`};
+const fTime=ts=>{const d=new Date(ts);return `${two(d.getHours())}:${two(d.getMinutes())}`};
+const needName=()=>!(state.name||"").trim();
+function showGate(){const g=$("gate");g.hidden=false;const i=$("gName");i.value=state.name||"";$("gGo").disabled=i.value.trim().length<2;setTimeout(()=>{try{i.focus()}catch(e){}},50)}
+function hideGate(){$("gate").hidden=true}
+$("gName").addEventListener("input",e=>{const v=e.target.value.trim();$("gGo").disabled=v.length<2;$("gErr").textContent=v&&v.length<2?"이름을 2글자 이상 입력하세요.":""});
+$("gName").addEventListener("keydown",e=>{if(e.key==="Enter"&&!$("gGo").disabled)$("gGo").click()});
+$("gGo").onclick=()=>{const v=$("gName").value.trim();if(v.length<2)return;state.name=v;if(!state.startAt)state.startAt=Date.now();save();$("stu").value=v;hideGate()};
+$("stuChg").onclick=showGate;
+const _grade=grade;
+grade=function(q){if(needName()){showGate();return}const before=state.res[q.id];_grade(q);if(state.res[q.id]!==undefined&&before===undefined){const now=Date.now();if(!state.startAt)state.startAt=now;state.lastAt=now}};
+document.addEventListener("click",e=>{if(needName()&&!e.target.closest("#gate")){e.preventDefault();e.stopPropagation();showGate()}},true);
+function renderNote(){
+  const D=reportData();const ws=D.flatMap(d=>d.wrong.map(x=>({u:d.u,...x})));
+  const optsHTML=x=>{if(x.T.id!=="mc"||x.q.t==="m")return "";const pick=state.inp[x.q.id]||[];return `<ul class="nopts">${x.q.opts.map(o=>{const m=pick.includes(o.j);return `<li class="${o.c?"c":(m?"m":"")}">${o.c?"✔":(m?"✘":"·")} ${esc(o.t)}${o.c&&!m?" <small>(못 고름)</small>":""}</li>`}).join("")}</ul>`};
+  const cards=ws.map((x,k)=>`<div class="ncard"><div class="nh"><b>${k+1}</b><span>${x.u.name}</span><span>· ${x.T.name}</span><span>· ${x.q.a} ${esc(x.u.AREAS[x.q.a])}</span></div>
+    <div class="nq">${esc(x.q.q)}</div>${optsHTML(x)}
+    <div class="nmy">✘ 내 답: ${esc(myOf(x.q,x.T.id))}</div><div class="nok">✔ 정답: ${esc(ansOf(x.q,x.T.id))}</div>
+    <div class="nxp">💡 해설: ${esc(x.q.exp||"")}</div></div>`).join("");
+  const done=D.reduce((s,d)=>s+d.dn,0);
+  $("note").innerHTML=`<h2>오답노트 <small style="font-size:14px;color:var(--muted)">${esc(state.name||"")}</small></h2>
+   <div class="ninfo">${state.startAt?`${fDate(state.startAt)} · ${fTime(state.startAt)} ~ ${state.lastAt?fTime(state.lastAt):"-"} · `:""}채점 ${done}문항 중 틀린 문제 ${ws.length}개 (세 능력단위 전체)</div>
+   ${ws.length?cards:`<p class="note">${done?"틀린 문제가 없습니다. 👏":"아직 채점한 문제가 없어요. 문제를 풀고 채점하면 틀린 문제가 여기에 모입니다."}</p>`}
+   <div class="ntools"><button class="btn primary" type="button" id="nCopy">오답노트 복사</button><button class="btn" type="button" id="nClose">닫기</button></div>`;
+  $("nClose").onclick=()=>{$("note").hidden=true};
+  $("nCopy").onclick=async()=>{const L=[`[오답노트] ${state.name||""} · ${state.startAt?fDate(state.startAt)+" "+fTime(state.startAt)+"~"+(state.lastAt?fTime(state.lastAt):""):""}`,`틀린 문제 ${ws.length}개`,""];
+    ws.forEach((x,k)=>L.push(`${k+1}. [${x.u.name}/${x.T.name}] ${x.q.q}`,`   내 답: ${myOf(x.q,x.T.id)}`,`   정답: ${ansOf(x.q,x.T.id)}`,`   해설: ${x.q.exp||""}`,""));
+    const txt=L.join("\n");$("copyText").value=txt;try{await navigator.clipboard.writeText(txt);$("nCopy").textContent="복사됨";$("copyWrap").hidden=true}catch(e){$("copyWrap").hidden=false}};
+}
+$("showNote").onclick=()=>{if(needName()){showGate();return}const n=$("note");if(n.hidden){renderNote();n.hidden=false;$("report").hidden=true;n.scrollIntoView({behavior:"smooth",block:"start"})}else n.hidden=true};
+const _renderAll=renderAll;renderAll=function(){_renderAll();if(!$("note").hidden)renderNote()};
+renderAll();
+if(needName())showGate();
+})();
+</script>
+
+</body>
+</html>
